@@ -1,30 +1,31 @@
 import json
-import zlib
 
 
 class DocDB:
-    def __init__(self, compress_docs=False):
-        self.doc_store = []
-        self.compress_docs = compress_docs
+    def __init__(self):
+        self._documents = []
 
-    def add(self, document):
-        compressed_doc = zlib.compress(document.encode('utf-8')) \
-                            if self.compress_docs else document
-        document_base_dict = set(self.__key_val_extract(json.loads(document)))
-        self.doc_store += (document_base_dict, compressed_doc),
+    def add(self, doc):
+        doc_json = json.loads(doc)
+        document_base_pairs = set(self.__key_val_extract(doc_json))
+        self._documents += (document_base_pairs, doc_json),
 
-    def add_many(self, documents):
-        for document in documents:
-            self.add(document)
+    def add_many(self, docs):
+        for doc in docs:
+            self.add(doc)
 
     def search(self, query):
-        query_dict = set(self.__key_val_extract(json.loads(query)))
-        if self.compress_docs:
-            return [zlib.decompress(raw_doc) for doc, raw_doc in self.doc_store
-                    if query_dict <= doc]
-        else:
-            return [raw_doc for doc, raw_doc in self.doc_store
-                    if query_dict <= doc]
+        query_base_pairs = set(self.__key_val_extract(json.loads(query)))
+        return [raw for doc, raw in self._documents if query_base_pairs <= doc]
+
+    def update(self, match, update):
+        match_base_pairs = set(self.__key_val_extract(json.loads(match)))
+        for i, pair in enumerate(self._documents):
+            if match_base_pairs <= pair[0]:
+                updated_doc = {**pair[1], **json.loads(update)}
+                updated_doc_base_pairs = set(self.__key_val_extract(updated_doc))
+                self._documents[i] = (updated_doc_base_pairs, updated_doc)
+        return True
 
     def __key_val_extract(self, doc_dict):
         extracted_pairs = []
@@ -34,13 +35,12 @@ class DocDB:
                 extracted_pairs.extend(self.__key_val_extract(value))
             elif isinstance(value, list):
                 extracted_pairs += (key, 'nested_list'),
-                for pair in self.__key_val_extract_list(value):
-                    extracted_pairs += (pair[0], pair[1]),
+                extracted_pairs.extend(self.__list_extract(value))
             else:
                 extracted_pairs += (key, value),
         return extracted_pairs
 
-    def __key_val_extract_list(self, doc_list):
+    def __list_extract(self, doc_list):
         extracted_pairs = []
         for item in doc_list:
             extracted_pairs.extend(self.__key_val_extract(item))
