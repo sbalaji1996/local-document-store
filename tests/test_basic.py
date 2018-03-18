@@ -5,7 +5,7 @@ import json
 
 class BasicTestSuite(unittest.TestCase):
     def test_basic(self):
-        db = imds.DocDB()
+        db = imds.DocStore()
         first = '{"year":"2017", "months": [{"m":"january"}, {"m":"february"}]}'
         second = '{"year":"2017", "months": [{"m":"march"}, {"m":"april"}]}'
         db.add(first)

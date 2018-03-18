@@ -1,7 +1,7 @@
 import json
 
 
-class DocDB:
+class DocStore:
     def __init__(self):
         self._documents = []
 
@@ -32,11 +32,13 @@ class DocDB:
         return True
 
     def __convert_str_json(self, item):
-        return json.loads(item) if isinstance(item, str) else item
+        if isinstance(item, str):
+            return json.loads(item)
+        return item
 
-    def __key_val_extract(self, doc_dict):
+    def __key_val_extract(self, doc):
         extracted_pairs = []
-        for key, value in doc_dict.items():
+        for key, value in doc.items():
             if isinstance(value, dict):
                 extracted_pairs += (key, 'nested_json'),
                 extracted_pairs.extend(self.__key_val_extract(value))
