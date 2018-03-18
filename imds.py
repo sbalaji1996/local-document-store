@@ -6,7 +6,8 @@ class DocDB:
         self._documents = []
 
     def add(self, doc):
-        doc_json = json.loads(doc)
+        doc_json = self.__convert_str_json(doc)
+        #print(doc_json)
         document_base_pairs = set(self.__key_val_extract(doc_json))
         self._documents += (document_base_pairs, doc_json),
 
@@ -15,17 +16,23 @@ class DocDB:
             self.add(doc)
 
     def search(self, query):
-        query_base_pairs = set(self.__key_val_extract(json.loads(query)))
+        query_json = self.__convert_str_json(query)
+        query_base_pairs = set(self.__key_val_extract(query_json))
         return [raw for doc, raw in self._documents if query_base_pairs <= doc]
 
-    def update(self, match, update):
-        match_base_pairs = set(self.__key_val_extract(json.loads(match)))
+    def update(self, match, updated_val):
+        match_json = self.__convert_str_json(match)
+        update_json = self.__convert_str_json(updated_val)
+        match_base_pairs = set(self.__key_val_extract(match_json))
         for i, pair in enumerate(self._documents):
             if match_base_pairs <= pair[0]:
-                updated_doc = {**pair[1], **json.loads(update)}
+                updated_doc = {**pair[1], **update_json}
                 updated_doc_base_pairs = set(self.__key_val_extract(updated_doc))
                 self._documents[i] = (updated_doc_base_pairs, updated_doc)
         return True
+
+    def __convert_str_json(self, item):
+        return json.loads(item) if isinstance(item, str) else item
 
     def __key_val_extract(self, doc_dict):
         extracted_pairs = []
