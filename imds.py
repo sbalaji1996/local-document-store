@@ -31,6 +31,29 @@ class DocStore:
                 self._documents[i] = (updated_doc_base_pairs, updated_doc)
         return True
 
+    def update_slow(self, match, updated_key, updated_val):
+        match_json = self.__convert_str_json(match)
+        match_base_pairs = set(self.__key_val_extract(match_json))
+        for i, item in enumerate(self._documents):
+            pairs, raw = item
+            if match_base_pairs <= pairs:
+                updated_doc = self.__update_slow_helper(raw, updated_key, updated_val)
+                updated_doc_base_pairs = set(self.__key_val_extract(updated_doc))
+                self._documents[i] = (updated_doc_base_pairs, updated_doc)
+
+    def __update_slow_helper(self, prev, new_key, new_val):
+        updated = prev.copy()
+        for key, value in prev.items():
+            if isinstance(value, dict):
+                updated[key] = self.__update_slow_helper(value, new_key, new_val)
+            elif isinstance(value, list):
+                updated_list = [self.__update_slow_helper(item, new_key, new_val) for item in value]
+                updated[key] = updated_list
+            elif key == new_key:
+                updated[key] = new_val
+        print(updated)
+        return updated
+
     def __convert_str_json(self, item):
         if isinstance(item, str):
             return json.loads(item)
