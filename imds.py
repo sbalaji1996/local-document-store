@@ -7,7 +7,6 @@ class DocDB:
 
     def add(self, doc):
         doc_json = self.__convert_str_json(doc)
-        #print(doc_json)
         document_base_pairs = set(self.__key_val_extract(doc_json))
         self._documents += (document_base_pairs, doc_json),
 
