@@ -17,15 +17,16 @@ class DocDB:
     def search(self, query):
         query_json = self.__convert_str_json(query)
         query_base_pairs = set(self.__key_val_extract(query_json))
-        return [raw for doc, raw in self._documents if query_base_pairs <= doc]
+        return [raw for pairs, raw in self._documents if query_base_pairs <= pairs]
 
     def update(self, match, updated_val):
         match_json = self.__convert_str_json(match)
         update_json = self.__convert_str_json(updated_val)
         match_base_pairs = set(self.__key_val_extract(match_json))
-        for i, pair in enumerate(self._documents):
-            if match_base_pairs <= pair[0]:
-                updated_doc = {**pair[1], **update_json}
+        for i, item in enumerate(self._documents):
+            pairs, raw = item
+            if match_base_pairs <= pairs:
+                updated_doc = {**raw, **update_json}
                 updated_doc_base_pairs = set(self.__key_val_extract(updated_doc))
                 self._documents[i] = (updated_doc_base_pairs, updated_doc)
         return True
