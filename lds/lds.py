@@ -27,6 +27,9 @@ class DocStore:
         of tuples representing the (key: value) pairings of the document (to be
         used for querying the documents), and appends aforementioned tuple to
         the list of documents initialized in __init__.
+
+        .note:: the document passed in should be a valid json. This will be
+        checked if you pass in a string, but not a dictionary.
         
         >>> store = DocStore()
         >>> store.add('{"name": "oski", "school": "california"}') #string
