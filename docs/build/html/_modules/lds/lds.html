@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lds.lds &mdash; local-document-store 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="local-document-store 0.0.1 documentation" href="../../index.html" />
+    <link rel="up" title="lds" href="../lds.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lds.lds</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+
+<div class="viewcode-block" id="DocStore"><a class="viewcode-back" href="../../lds.html#lds.lds.DocStore">[docs]</a><span class="k">class</span> <span class="nc">DocStore</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; The main class for this module, which stores and operates on documents.</span>
+
+<span class="sd">    This class attempts to replicate some of the functionality of the popular</span>
+<span class="sd">    document store MongoDB. It provides method to add and store JSON documents,</span>
+<span class="sd">    search those documents using an example JSON query, and modify those</span>
+<span class="sd">    documents using a search query and a replacement document.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The standard initialization method, initializes the list where </span>
+<span class="sd">        documents will be stored.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        None </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="DocStore.add"><a class="viewcode-back" href="../../lds.html#lds.lds.DocStore.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a document to the list holding the documents.</span>
+
+<span class="sd">        Constructs a tuple of a document, passed in as a parameter, and a set</span>
+<span class="sd">        of tuples representing the (key: value) pairings of the document (to be</span>
+<span class="sd">        used for querying the documents), and appends aforementioned tuple to</span>
+<span class="sd">        the list of documents initialized in __init__.</span>
+
+<span class="sd">        .note:: the document passed in should be a valid json. This will be</span>
+<span class="sd">        checked if you pass in a string, but not a dictionary.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; store = DocStore()</span>
+<span class="sd">        &gt;&gt;&gt; store.add(&#39;{&quot;name&quot;: &quot;oski&quot;, &quot;school&quot;: &quot;california&quot;}&#39;) #string</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; store.add({&#39;name&#39;: &#39;harry&#39;, &#39;school&#39;: &#39;washington&#39;}) #dict</span>
+<span class="sd">        True</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        doc: str/dict</span>
+<span class="sd">            doc, the document to be added, can be passed in as a string</span>
+<span class="sd">            or a Python dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        True: if add operation was successfully completed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">doc_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__convert_str_json</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="n">document_base_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__key_val_extract</span><span class="p">(</span><span class="n">doc_json</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span> <span class="o">+=</span> <span class="p">(</span><span class="n">document_base_pairs</span><span class="p">,</span> <span class="n">doc_json</span><span class="p">),</span>
+        <span class="k">return</span> <span class="bp">True</span></div>
+
+<div class="viewcode-block" id="DocStore.add_many"><a class="viewcode-back" href="../../lds.html#lds.lds.DocStore.add_many">[docs]</a>    <span class="k">def</span> <span class="nf">add_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">docs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds multiple documents to the class&#39; internal list of documents.</span>
+
+<span class="sd">        Calls the `add` function over the list of documents passed in.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        docs: list</span>
+<span class="sd">            the list of documents, which can be strings or Python dictionaries.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        True: if all add operations were successfully completed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span></div>
+
+<div class="viewcode-block" id="DocStore.search"><a class="viewcode-back" href="../../lds.html#lds.lds.DocStore.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Searches for documents that match the query passed in.</span>
+
+<span class="sd">        Converts the query passed in as a parameter to a set of tuples</span>
+<span class="sd">        representing the (key: value) pairings of the document, and checks if</span>
+<span class="sd">        the set of tuples of the query parameter is a subset of any of the sets</span>
+<span class="sd">        of tuples of the documents currently in the store. If it finds matching</span>
+<span class="sd">        documents, it returns them as a list.</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; store.add({&#39;name&#39;: &#39;harry&#39;, &#39;school&#39;: &#39;washington&#39;})</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; store.add(&#39;{&quot;name&quot;: &quot;oski&quot;, &quot;school&quot;: &quot;california&quot;}&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; store.search({&#39;name&#39;: &#39;oski&#39;})</span>
+<span class="sd">        [{&#39;name&#39;: &#39;oski&#39;, &#39;school&#39;: &#39;california&#39;}]</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query: str/dict</span>
+<span class="sd">            the query that the list of documents will be matched against.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list: of documents that match the query passed in.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__convert_str_json</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">query_base_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__key_val_extract</span><span class="p">(</span><span class="n">query_json</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">raw</span> <span class="k">for</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">raw</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span> <span class="k">if</span> <span class="n">query_base_pairs</span> <span class="o">&lt;=</span> <span class="n">pairs</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DocStore.update"><a class="viewcode-back" href="../../lds.html#lds.lds.DocStore.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates documents with the new values passed in to the documents that</span>
+<span class="sd">        match the query passed in.</span>
+
+<span class="sd">        Searches the document with the same logic as described in `search`, and</span>
+<span class="sd">        updates documents that match. The `exact` parameter determines what </span>
+<span class="sd">        type of update will be performed. If `exact` is False (its default value),</span>
+<span class="sd">        the old document will simply be merged with the new one using</span>
+<span class="sd">        `{**old, **new}`. If `exact` is True, it is important to pass in a</span>
+<span class="sd">        single (key: value) pairing to both the `match` and `new` parameter;</span>
+<span class="sd">        the document will be iterated over and only when the match is found in</span>
+<span class="sd">        the current document will the value be updated.</span>
+
+<span class="sd">        .note:: if you are updating a nested value of the document, you must</span>
+<span class="sd">                use `exact`=True. Python&#39;s merge operation, as detailed above,</span>
+<span class="sd">                will not accurately merge nested documents.</span>
+
+<span class="sd">        &gt;&gt;&gt; store.add(&#39;{&quot;name&quot;: &quot;oski&quot;, &quot;details&quot;: {&quot;school&quot;: &quot;california&quot;, &quot;year&quot;: &quot;senior&quot;}}&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; store.add(&#39;{&quot;name&quot;: &quot;harry&quot;, &quot;details&quot;: {&quot;school&quot;: &quot;washington&quot;, &quot;year&quot;: &quot;junior&quot;}}&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; store.search({&quot;year&quot;: &quot;junior&quot;})</span>
+<span class="sd">        [{&#39;name&#39;: &#39;harry&#39;, &#39;details&#39;: {&#39;year&#39;: &#39;junior&#39;, &#39;school&#39;: &#39;washington&#39;}}]</span>
+<span class="sd">        &gt;&gt;&gt; store.update({&quot;year&quot;: &quot;senior&quot;}, {&quot;year&quot;: &quot;junior&quot;}, exact=True)</span>
+<span class="sd">        &gt;&gt;&gt; store.search({&quot;year&quot;: &quot;junior&quot;})</span>
+<span class="sd">        [{&#39;name&#39;: &#39;oski&#39;, &#39;details&#39;: {&#39;year&#39;: &#39;junior&#39;, &#39;school&#39;: &#39;california&#39;}},\</span>
+<span class="sd">        {&#39;name&#39;: &#39;harry&#39;, &#39;details&#39;: {&#39;year&#39;: &#39;junior&#39;, &#39;school&#39;: &#39;washington&#39;}}]</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        match: str/dict</span>
+<span class="sd">            the query that the list of documents will be matched against.</span>
+<span class="sd">        new: str/dict</span>
+<span class="sd">            the document which will be merged into the existing, matching document.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        True: if the update was performed successfully.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">match_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__convert_str_json</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+        <span class="n">new_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__convert_str_json</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match_json</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_json</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="n">match_pair</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">match_json</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">new_pair</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_json</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">match_base_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__key_val_extract</span><span class="p">(</span><span class="n">match_json</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">):</span>
+            <span class="n">pairs</span><span class="p">,</span> <span class="n">raw</span> <span class="o">=</span> <span class="n">item</span>
+            <span class="k">if</span> <span class="n">match_base_pairs</span> <span class="o">&lt;=</span> <span class="n">pairs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
+                    <span class="n">updated_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__update_exact_helper</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">match_pair</span><span class="p">,</span> <span class="n">new_pair</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">updated_doc</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">raw</span><span class="p">,</span> <span class="o">**</span><span class="n">new_json</span><span class="p">}</span>
+                <span class="n">updated_doc_base_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__key_val_extract</span><span class="p">(</span><span class="n">updated_doc</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_documents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">updated_doc_base_pairs</span><span class="p">,</span> <span class="n">updated_doc</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__convert_str_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Converts a string to a dictionary if it is not already a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span>
+
+    <span class="k">def</span> <span class="nf">__update_exact_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prev</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper method to update the document, as described in `update`.&quot;&quot;&quot;</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">prev</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new_key</span><span class="p">,</span> <span class="n">new_val</span> <span class="o">=</span> <span class="n">new</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">prev</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">updated</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__update_exact_helper</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">updated</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__update_exact_helper</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">match</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">==</span> <span class="n">new_key</span><span class="p">:</span>
+                <span class="n">updated</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_val</span>
+        <span class="k">return</span> <span class="n">updated</span>
+
+    <span class="k">def</span> <span class="nf">__key_val_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper method to extract (key: value) pairings from the document, as described in `add`.&quot;&quot;&quot;</span>
+        <span class="n">extracted_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">extracted_pairs</span> <span class="o">+=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;nested_json&#39;</span><span class="p">),</span>
+                <span class="n">extracted_pairs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__key_val_extract</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">extracted_pairs</span> <span class="o">+=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;nested_list&#39;</span><span class="p">),</span>
+                <span class="n">pairs_from_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__key_val_extract</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                <span class="n">extracted_pairs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">pairs_from_list</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">extracted_pairs</span> <span class="o">+=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span>
+        <span class="k">return</span> <span class="n">extracted_pairs</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  <li><a href="../lds.html">lds</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Srinand Balaji.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>lds module &mdash; local-document-store 0.0.1 documentation</title>
+    <title>lds package &mdash; local-document-store 0.0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -36,11 +36,16 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-lds">
-<span id="lds-module"></span><h1>lds module<a class="headerlink" href="#module-lds" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="lds-package">
+<h1>lds package<a class="headerlink" href="#lds-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-lds.lds">
+<span id="lds-lds-module"></span><h2>lds.lds module<a class="headerlink" href="#module-lds.lds" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="lds.DocStore">
-<em class="property">class </em><code class="descclassname">lds.</code><code class="descname">DocStore</code><a class="reference internal" href="_modules/lds.html#DocStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore" title="Permalink to this definition">¶</a></dt>
+<dt id="lds.lds.DocStore">
+<em class="property">class </em><code class="descclassname">lds.lds.</code><code class="descname">DocStore</code><a class="reference internal" href="_modules/lds/lds.html#DocStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.lds.DocStore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>The main class for this module, which stores and operates on documents.</p>
 <p>This class attempts to replicate some of the functionality of the popular
@@ -49,13 +54,15 @@ search those documents using an example JSON query, and modify those
 documents using a search query and a replacement document.</p>
 <p class="rubric">Methods</p>
 <dl class="method">
-<dt id="lds.DocStore.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>doc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds.html#DocStore.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore.add" title="Permalink to this definition">¶</a></dt>
+<dt id="lds.lds.DocStore.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>doc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/lds.html#DocStore.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.lds.DocStore.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a document to the list holding the documents.</p>
 <p>Constructs a tuple of a document, passed in as a parameter, and a set
 of tuples representing the (key: value) pairings of the document (to be
 used for querying the documents), and appends aforementioned tuple to
 the list of documents initialized in __init__.</p>
+<p>.note:: the document passed in should be a valid json. This will be
+checked if you pass in a string, but not a dictionary.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">DocStore</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;{&quot;name&quot;: &quot;oski&quot;, &quot;school&quot;: &quot;california&quot;}&#39;</span><span class="p">)</span> <span class="c1">#string</span>
 <span class="go">True</span>
@@ -82,8 +89,8 @@ or a Python dictionary.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="lds.DocStore.add_many">
-<code class="descname">add_many</code><span class="sig-paren">(</span><em>docs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds.html#DocStore.add_many"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore.add_many" title="Permalink to this definition">¶</a></dt>
+<dt id="lds.lds.DocStore.add_many">
+<code class="descname">add_many</code><span class="sig-paren">(</span><em>docs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/lds.html#DocStore.add_many"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.lds.DocStore.add_many" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds multiple documents to the class&#8217; internal list of documents.</p>
 <p>Calls the <cite>add</cite> function over the list of documents passed in.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -104,8 +111,8 @@ or a Python dictionary.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="lds.DocStore.search">
-<code class="descname">search</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds.html#DocStore.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore.search" title="Permalink to this definition">¶</a></dt>
+<dt id="lds.lds.DocStore.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/lds.html#DocStore.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.lds.DocStore.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Searches for documents that match the query passed in.</p>
 <p>Converts the query passed in as a parameter to a set of tuples
 representing the (key: value) pairings of the document, and checks if
@@ -138,8 +145,8 @@ documents, it returns them as a list.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="lds.DocStore.update">
-<code class="descname">update</code><span class="sig-paren">(</span><em>match</em>, <em>new</em>, <em>exact=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds.html#DocStore.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore.update" title="Permalink to this definition">¶</a></dt>
+<dt id="lds.lds.DocStore.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>match</em>, <em>new</em>, <em>exact=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds/lds.html#DocStore.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.lds.DocStore.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates documents with the new values passed in to the documents that
 match the query passed in.</p>
 <p>Searches the document with the same logic as described in <cite>search</cite>, and
@@ -190,13 +197,27 @@ will not accurately merge nested documents.</dd>
 </dd></dl>
 
 </div>
+<div class="section" id="module-lds">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lds" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
 
 
           </div>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">lds package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-lds.lds">lds.lds module</a></li>
+<li><a class="reference internal" href="#module-lds">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>

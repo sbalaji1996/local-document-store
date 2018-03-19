@@ -1,8 +1,7 @@
-local-document-store
-====================
+lds
+===
 
 .. toctree::
    :maxdepth: 4
 
    lds
-   tests
