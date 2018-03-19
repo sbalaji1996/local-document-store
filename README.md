@@ -4,6 +4,7 @@ This package was written in an attempt to replicate some of the functionality of
 
 ## Example Usage
 ```
+>>> from lds import DocStore
 >>> store = DocStore()
 >>> store.add('{"name": "oski", "details": {"school": "california", "year": "senior"}}') #add string
 True
