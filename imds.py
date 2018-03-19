@@ -20,25 +20,24 @@ class DocStore:
         query_base_pairs = set(self.__key_val_extract(query_json))
         return [raw for pairs, raw in self._documents if query_base_pairs <= pairs]
 
-    def update(self, match, updated_val):
+    def update(self, match, new, exact=False):
         match_json = self.__convert_str_json(match)
-        update_json = self.__convert_str_json(updated_val)
-        match_base_pairs = set(self.__key_val_extract(match_json))
-        for i, item in enumerate(self._documents):
-            pairs, raw = item
-            if match_base_pairs <= pairs:
-                updated_doc = {**raw, **update_json}
-                updated_doc_base_pairs = set(self.__key_val_extract(updated_doc))
-                self._documents[i] = (updated_doc_base_pairs, updated_doc)
-        return True
+        new_json = self.__convert_str_json(new)
 
-    def update_slow(self, match, updated_key, updated_val):
-        match_json = self.__convert_str_json(match)
+        if exact:
+            if len(match_json) != 1 or len(new_json) != 1:
+                return
+            match_pair = list(match_json.items())[0]
+            new_pair = list(new_json.items())[0]
+
         match_base_pairs = set(self.__key_val_extract(match_json))
         for i, item in enumerate(self._documents):
             pairs, raw = item
             if match_base_pairs <= pairs:
-                updated_doc = self.__update_slow_helper(raw, updated_key, updated_val)
+                if exact:
+                    updated_doc = self.__update_exact_helper(raw, match_pair, new_pair)
+                else:
+                    updated_doc = {**raw, **new_json}
                 updated_doc_base_pairs = set(self.__key_val_extract(updated_doc))
                 self._documents[i] = (updated_doc_base_pairs, updated_doc)
 
@@ -47,14 +46,15 @@ class DocStore:
             return json.loads(item)
         return item
 
-    def __update_slow_helper(self, prev, new_key, new_val):
+    def __update_exact_helper(self, prev, match, new):
         updated = prev.copy()
+        new_key, new_val = new
         for key, value in prev.items():
             if isinstance(value, dict):
-                updated[key] = self.__update_slow_helper(value, new_key, new_val)
+                updated[key] = self.__update_exact_helper(value, match, new)
             elif isinstance(value, list):
-                updated[key] = [self.__update_slow_helper(item, new_key, new_val) for item in value]
-            elif key == new_key:
+                updated[key] = [self.__update_exact_helper(item, match, new) for item in value]
+            elif (key, value) == match and key == new_key:
                 updated[key] = new_val
         return updated
 

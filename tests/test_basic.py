@@ -30,8 +30,8 @@ class BasicTestSuite(unittest.TestCase):
         assert db.search('{"m":"march"}') == [json.loads(second)]
         assert db.search('{"m":"may"}') == []
 
-        third = '{"year":"2017", "months": [{"m":"may"}, {"m":"may"}]}'
-        db.update_slow('{"m":"march"}', 'm', 'may')
+        third = '{"year":"2017", "months": [{"m":"may"}, {"m":"april"}]}'
+        db.update('{"m":"march"}', '{"m":"may"}', exact=True)
         assert db.search('{"m":"march"}') == []
         assert db.search('{"m":"may"}') == [json.loads(third)]
 
