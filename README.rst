@@ -13,7 +13,7 @@ Example Usage
 >>> store = DocStore()
 >>> store.add('{"name": "oski", "details": {"school": "california", "year": "senior"}}') #add string
 True
->>> store.add('{"name": "harry", "details": {"school": "washington", "year": "junior"}}') #add dict
+>>> store.add({"name": "harry", "details": {"school": "washington", "year": "junior"}}) #add dict
 True
 >>> store.search({"year": "junior"})
 [{'name': 'harry', 'details': {'year': 'junior', 'school': 'washington'}}]
