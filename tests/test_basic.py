@@ -1,11 +1,11 @@
-from .context import imds
+from .context import lds
 import unittest
 import json
 
 
 class BasicTestSuite(unittest.TestCase):
     def test_basic(self):
-        db = imds.DocStore()
+        db = lds.DocStore()
         first = '{"year":"2017", "months": [{"m":"january"}, {"m":"february"}]}'
         second = '{"year":"2017", "months": [{"m":"march"}, {"m":"april"}]}'
         db.add(first)
@@ -21,7 +21,7 @@ class BasicTestSuite(unittest.TestCase):
         assert db.search('{"m":"may"}') == [json.loads(third)]
 
     def test_basic_update(self):
-        db = imds.DocStore()
+        db = lds.DocStore()
         first = '{"year":"2017", "months": [{"m":"january"}, {"m":"february"}]}'
         second = '{"year":"2017", "months": [{"m":"march"}, {"m":"april"}]}'
         db.add(first)

@@ -1,11 +1,11 @@
-from .context import imds
+from .context import lds
 import unittest
 import json
 
 
 class BasicTestSuite(unittest.TestCase):
     def construct_db(self):
-        db = imds.DocStore()
+        db = lds.DocStore()
 
         insert = []
         for i in range(1000):

@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lds module &mdash; local-document-store 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="local-document-store 0.0.1 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-lds">
+<span id="lds-module"></span><h1>lds module<a class="headerlink" href="#module-lds" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="lds.DocStore">
+<em class="property">class </em><code class="descclassname">lds.</code><code class="descname">DocStore</code><a class="reference internal" href="_modules/lds.html#DocStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>The main class for this module, which stores and operates on documents.</p>
+<p>This class attempts to replicate some of the functionality of the popular
+document store MongoDB. It provides method to add and store JSON documents,
+search those documents using an example JSON query, and modify those
+documents using a search query and a replacement document.</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="lds.DocStore.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>doc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds.html#DocStore.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a document to the list holding the documents.</p>
+<p>Constructs a tuple of a document, passed in as a parameter, and a set
+of tuples representing the (key: value) pairings of the document (to be
+used for querying the documents), and appends aforementioned tuple to
+the list of documents initialized in __init__.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">DocStore</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;{&quot;name&quot;: &quot;oski&quot;, &quot;school&quot;: &quot;california&quot;}&#39;</span><span class="p">)</span> <span class="c1">#string</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">add</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;harry&#39;</span><span class="p">,</span> <span class="s1">&#39;school&#39;</span><span class="p">:</span> <span class="s1">&#39;washington&#39;</span><span class="p">})</span> <span class="c1">#dict</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>doc: str/dict</strong></p>
+<blockquote>
+<div><p>doc, the document to be added, can be passed in as a string
+or a Python dictionary.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True: if add operation was successfully completed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lds.DocStore.add_many">
+<code class="descname">add_many</code><span class="sig-paren">(</span><em>docs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds.html#DocStore.add_many"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore.add_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds multiple documents to the class&#8217; internal list of documents.</p>
+<p>Calls the <cite>add</cite> function over the list of documents passed in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>docs: list</strong></p>
+<blockquote>
+<div><p>the list of documents, which can be strings or Python dictionaries.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True: if all add operations were successfully completed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lds.DocStore.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds.html#DocStore.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for documents that match the query passed in.</p>
+<p>Converts the query passed in as a parameter to a set of tuples
+representing the (key: value) pairings of the document, and checks if
+the set of tuples of the query parameter is a subset of any of the sets
+of tuples of the documents currently in the store. If it finds matching
+documents, it returns them as a list.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">add</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;harry&#39;</span><span class="p">,</span> <span class="s1">&#39;school&#39;</span><span class="p">:</span> <span class="s1">&#39;washington&#39;</span><span class="p">})</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;{&quot;name&quot;: &quot;oski&quot;, &quot;school&quot;: &quot;california&quot;}&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">search</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;oski&#39;</span><span class="p">})</span>
+<span class="go">[{&#39;name&#39;: &#39;oski&#39;, &#39;school&#39;: &#39;california&#39;}]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>query: str/dict</strong></p>
+<blockquote>
+<div><p>the query that the list of documents will be matched against.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list: of documents that match the query passed in.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lds.DocStore.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>match</em>, <em>new</em>, <em>exact=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lds.html#DocStore.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lds.DocStore.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates documents with the new values passed in to the documents that
+match the query passed in.</p>
+<p>Searches the document with the same logic as described in <cite>search</cite>, and
+updates documents that match. The <cite>exact</cite> parameter determines what 
+type of update will be performed. If <cite>exact</cite> is False (its default value),
+the old document will simply be merged with the new one using
+<cite>{**old, **new}</cite>. If <cite>exact</cite> is True, it is important to pass in a
+single (key: value) pairing to both the <cite>match</cite> and <cite>new</cite> parameter;
+the document will be iterated over and only when the match is found in
+the current document will the value be updated.</p>
+<dl class="docutils">
+<dt>.note:: if you are updating a nested value of the document, you must</dt>
+<dd>use <a href="#id1"><span class="problematic" id="id2">`</span></a>exact`=True. Python&#8217;s merge operation, as detailed above,
+will not accurately merge nested documents.</dd>
+</dl>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;{&quot;name&quot;: &quot;oski&quot;, &quot;details&quot;: {&quot;school&quot;: &quot;california&quot;, &quot;year&quot;: &quot;senior&quot;}}&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;{&quot;name&quot;: &quot;harry&quot;, &quot;details&quot;: {&quot;school&quot;: &quot;washington&quot;, &quot;year&quot;: &quot;junior&quot;}}&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">search</span><span class="p">({</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;junior&quot;</span><span class="p">})</span>
+<span class="go">[{&#39;name&#39;: &#39;harry&#39;, &#39;details&#39;: {&#39;year&#39;: &#39;junior&#39;, &#39;school&#39;: &#39;washington&#39;}}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;senior&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;junior&quot;</span><span class="p">},</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">search</span><span class="p">({</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="s2">&quot;junior&quot;</span><span class="p">})</span>
+<span class="go">[{&#39;name&#39;: &#39;oski&#39;, &#39;details&#39;: {&#39;year&#39;: &#39;junior&#39;, &#39;school&#39;: &#39;california&#39;}},        {&#39;name&#39;: &#39;harry&#39;, &#39;details&#39;: {&#39;year&#39;: &#39;junior&#39;, &#39;school&#39;: &#39;washington&#39;}}]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>match: str/dict</strong></p>
+<blockquote>
+<div><p>the query that the list of documents will be matched against.</p>
+</div></blockquote>
+<p><strong>new: str/dict</strong></p>
+<blockquote>
+<div><p>the document which will be merged into the existing, matching document.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True: if the update was performed successfully.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lds.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Srinand Balaji.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/lds.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
