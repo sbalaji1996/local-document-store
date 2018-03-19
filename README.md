@@ -17,6 +17,7 @@ True
 [{'name': 'oski', 'details': {'year': 'junior', 'school': 'california'}},\
 {'name': 'harry', 'details': {'year': 'junior', 'school': 'washington'}}]
 ```
+Full documentation can be found [here](http://local-document-store.readthedocs.io/en/latest/lds.html).
 
 ### Who should use this library?
 This package is not intended for use in production, as of yet. For more comprehensive methods and more performant queries, one should use MongoDB itself. This package is useful for quickly storing a series of documents and querying/modifying them, and therefore may be useful in a proof-of-concept or early-stage application.
