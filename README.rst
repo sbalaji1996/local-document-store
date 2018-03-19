@@ -24,6 +24,13 @@ True
 
 Full documentation can be found at: http://local-document-store.readthedocs.io/en/latest/lds.html
 
+============
+Installation
+============
+  pip install lds
+  
+Requires Python >= 3.5.
+
 ============================
 Who should use this library?
 ============================
