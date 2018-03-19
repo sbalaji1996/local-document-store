@@ -1,4 +1,5 @@
 import json
+import itertools
 
 
 class DocStore:
@@ -41,23 +42,21 @@ class DocStore:
                 updated_doc_base_pairs = set(self.__key_val_extract(updated_doc))
                 self._documents[i] = (updated_doc_base_pairs, updated_doc)
 
+    def __convert_str_json(self, item):
+        if isinstance(item, str):
+            return json.loads(item)
+        return item
+
     def __update_slow_helper(self, prev, new_key, new_val):
         updated = prev.copy()
         for key, value in prev.items():
             if isinstance(value, dict):
                 updated[key] = self.__update_slow_helper(value, new_key, new_val)
             elif isinstance(value, list):
-                updated_list = [self.__update_slow_helper(item, new_key, new_val) for item in value]
-                updated[key] = updated_list
+                updated[key] = [self.__update_slow_helper(item, new_key, new_val) for item in value]
             elif key == new_key:
                 updated[key] = new_val
-        print(updated)
         return updated
-
-    def __convert_str_json(self, item):
-        if isinstance(item, str):
-            return json.loads(item)
-        return item
 
     def __key_val_extract(self, doc):
         extracted_pairs = []
@@ -67,13 +66,8 @@ class DocStore:
                 extracted_pairs.extend(self.__key_val_extract(value))
             elif isinstance(value, list):
                 extracted_pairs += (key, 'nested_list'),
-                extracted_pairs.extend(self.__list_extract(value))
+                pairs_from_list = [self.__key_val_extract(item) for item in value]
+                extracted_pairs.extend(list(itertools.chain(*pairs_from_list)))
             else:
                 extracted_pairs += (key, value),
-        return extracted_pairs
-
-    def __list_extract(self, doc_list):
-        extracted_pairs = []
-        for item in doc_list:
-            extracted_pairs.extend(self.__key_val_extract(item))
         return extracted_pairs
