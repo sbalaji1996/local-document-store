@@ -22,7 +22,7 @@ True
 [{'name': 'oski', 'details': {'year': 'junior', 'school': 'california'}},\
 {'name': 'harry', 'details': {'year': 'junior', 'school': 'washington'}}]
 
-Full documentation can be found at: http://local-document-store.readthedocs.io/en/latest/lds.html
+Full documentation can be found at: http://local-document-store.readthedocs.io/en/latest/lds.html?highlight=DocStore
 
 ============
 Installation
